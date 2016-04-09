@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Kuponchik.ru</string>
+    <string name="main_screen_name">Предложения</string>
+    <string name="profile_screen_name">Профиль</string>
+    <string name="history_screen_name">Ваши купоны</string>
+    <string name="drawer_item_offers">Предложения</string>
+    <string name="drawer_item_history">Ваши купоны</string>
+    <string name="drawer_item_profile">Профиль</string>
+    <string name="drawer_item_exit">Выход</string>
+    <string name="drawer_item_about">О программе</string>
+    <string name="add_to_favorite">Добавить в закладки</string>
+    <string name="dialog_about_message">1111</string>
+</resources>
