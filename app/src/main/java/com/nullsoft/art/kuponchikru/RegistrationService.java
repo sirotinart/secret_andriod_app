@@ -12,8 +12,8 @@ import retrofit2.http.POST;
 public interface RegistrationService
 {
     @FormUrlEncoded
-    @POST("userLogin")
-    Call<ResponseBody> userRegistration(@Field("login") String login, @Field("firstName") String firstName,
-                                 @Field("lastName") String LastName, @Field("city") String city,
-                                 @Field("password") String last);
+    @POST("registerUser")
+    Call<ResponseBody> registerUser(@Field("login") String login, @Field("firstName") String firstName,
+                                    @Field("lastName") String LastName, @Field("city") String city,
+                                    @Field("password") String last);
 }

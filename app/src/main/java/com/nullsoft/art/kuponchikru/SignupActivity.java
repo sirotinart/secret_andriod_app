@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,7 +26,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignupActivity extends AppCompatActivity {
+
     private static final String TAG = "SignupActivity";
+    private Retrofit retrofit;
 
     @Bind(R.id.input_name) EditText _nameText;
     @Bind(R.id.input_last_name) EditText _lastNameText;
@@ -35,11 +39,22 @@ public class SignupActivity extends AppCompatActivity {
     @Bind(R.id.btn_signup) Button _signupButton;
     @Bind(R.id.link_login) TextView _loginLink;
 
+    public SignupActivity()
+    {
+         retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.0.100:3000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
+
+        loadCityList();
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,39 +93,37 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement your own signup logic here.
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.100:3000/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
         RegistrationService service = retrofit.create(RegistrationService.class);
 
-        Call<ResponseBody> call = service.userRegistration(email, name, lastName, city, password);
+        Call<ResponseBody> call = service.registerUser(email, name, lastName, city, password);
+
         call.enqueue(new Callback<ResponseBody>() {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Login","fail");
+                Log.d("signup() error:",t.getMessage());
+                onSignupFailed();
+                progressDialog.dismiss();
+
             }
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("Login","success");
+
+                Log.d("signup() error:","");
             }
         });
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+//        new android.os.Handler().postDelayed(
+//                new Runnable() {
+//                    public void run() {
+//                        // On complete call either onSignupSuccess or onSignupFailed
+//                        // depending on success
+//                        onSignupSuccess();
+//                        // onSignupFailed();
+//                        progressDialog.dismiss();
+//                    }
+//                }, 3000);
     }
 
 
@@ -121,41 +134,85 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Ошибка регистрации", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
 
     public boolean validate() {
 
-        //TODO: сделать валидацию и серверную часть
         boolean valid = true;
 
         String name = _nameText.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
+        String passwordRepeat =_passwordRepeatText.getText().toString();
+        String city = _cityText.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
+            _nameText.setError("Имя должно быть длиннее 3 символов");
             valid = false;
         } else {
             _nameText.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
+            _emailText.setError("Введите корректный e-mail");
             valid = false;
         } else {
             _emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+            _passwordText.setError("Пароль должен быть длиной от 4 до 10 символов");
             valid = false;
         } else {
             _passwordText.setError(null);
         }
 
+        if(passwordRepeat.isEmpty() || passwordRepeat.equals(password)) {
+            _passwordRepeatText.setError("Пароли не совпадают");
+            valid = false;
+        } else {
+            _passwordRepeatText.setError(null);
+        }
+
+        if(city.isEmpty()) {
+            _cityText.setError("Введите город");
+            valid = false;
+        } else {
+           _cityText.setError(null);
+        }
+
         return valid;
+    }
+
+    public void loadCityList()  {
+        ServerApi.CitiesList cityListService = retrofit.create(ServerApi.CitiesList.class);
+        Call<ServerApi.CityList> call = cityListService.getCities();
+
+        call.enqueue(new Callback<ServerApi.CityList>() {
+            @Override
+            public void onResponse(Call<ServerApi.CityList> call, Response<ServerApi.CityList> response) {
+                AutoCompleteTextView tv = (AutoCompleteTextView) findViewById(R.id.input_city);
+
+                String[] cities = {};
+                cities = response.body().cities.toArray(cities);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,cities);
+
+                try {
+                    tv.setAdapter(adapter);
+                } catch (NullPointerException e) {
+                    Log.d("loadCityList() error:", e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ServerApi.CityList> call, Throwable t) {
+                Log.d("loadCityList() error:", "cannot get list of cities from server (network error)");
+                Log.d("loadCityList() error:", t.getMessage());
+            }
+        });
     }
 }

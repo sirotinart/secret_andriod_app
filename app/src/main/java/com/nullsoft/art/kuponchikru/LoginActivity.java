@@ -83,34 +83,36 @@ public class LoginActivity extends AppCompatActivity {
 
         LoginService service = retrofit.create(LoginService.class);
 
-        Call<ResponseBody> call = service.userLogin("Peka","Peka");
+        Call<ResponseBody> call = service.userLogin(email,password);
         call.enqueue(new Callback<ResponseBody>() {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Login","fail");
+                Log.d("login() error:",t.getMessage());
+
+                onLoginFailed();
+                progressDialog.dismiss();
+
             }
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("Login","success");
+                Log.d("login() error:","success");
             }
         });
-
-        Log.d("Login","afterlogin");
 
 
         // TODO: Implement your own authentication logic here.
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+//        new android.os.Handler().postDelayed(
+//                new Runnable() {
+//                    public void run() {
+//                        // On complete call either onLoginSuccess or onLoginFailed
+//                        onLoginSuccess();
+//                        // onLoginFailed();
+//                        progressDialog.dismiss();
+//                    }
+//                }, 3000);
     }
 
 
@@ -138,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Ошибка входа", Toast.LENGTH_LONG).show();
 
         _loginButton.setEnabled(true);
     }
@@ -150,14 +152,14 @@ public class LoginActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
+            _emailText.setError("Введите корректный e-mail");
             valid = false;
         } else {
             _emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+            _passwordText.setError("Пароль должен быть длиной от 4 до 10 символов");
             valid = false;
         } else {
             _passwordText.setError(null);
