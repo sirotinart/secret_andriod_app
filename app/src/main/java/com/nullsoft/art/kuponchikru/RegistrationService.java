@@ -13,7 +13,7 @@ public interface RegistrationService
 {
     @FormUrlEncoded
     @POST("registerUser")
-    Call<ResponseBody> registerUser(@Field("login") String login, @Field("firstName") String firstName,
+    Call<ServerApi.SignupResponse> registerUser(@Field("login") String login, @Field("firstName") String firstName,
                                     @Field("lastName") String LastName, @Field("city") String city,
                                     @Field("password") String last);
 }

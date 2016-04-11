@@ -21,4 +21,11 @@ public class ServerApi {
         @GET("getCities")
         Call<CityList> getCities();
     }
+
+
+    public class SignupResponse {
+        public boolean success;
+        public String errorText;
+        public String[] errors;
+    }
 }

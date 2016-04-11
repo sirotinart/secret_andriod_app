@@ -66,7 +66,6 @@ public class SignupActivity extends AppCompatActivity {
         _loginLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Finish the registration screen and return to the Login activity
                 finish();
             }
         });
@@ -75,10 +74,10 @@ public class SignupActivity extends AppCompatActivity {
     public void signup() {
         Log.d(TAG, "Signup");
 
-        if (!validate()) {
-            onSignupFailed();
-            return;
-        }
+//        if (!validate()) {
+//            onSignupFailed();
+//            return;
+//        }
 
         _signupButton.setEnabled(false);
 
@@ -95,35 +94,46 @@ public class SignupActivity extends AppCompatActivity {
 
         RegistrationService service = retrofit.create(RegistrationService.class);
 
-        Call<ResponseBody> call = service.registerUser(email, name, lastName, city, password);
+//        Call<ResponseBody> call = service.registerUser(email, name, lastName, city, password);
+        Call<ServerApi.SignupResponse> call = service.registerUser("dsf@df88d.df", "art2", "sir2", "Иваново", "345");
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<ServerApi.SignupResponse>() {
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ServerApi.SignupResponse> call, Throwable t) {
                 Log.d("signup() error:",t.getMessage());
-                onSignupFailed();
+                onSignupFailed("Ошибка регистрации");
                 progressDialog.dismiss();
 
             }
 
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<ServerApi.SignupResponse> call, Response<ServerApi.SignupResponse> response) {
+                if(response.raw().code()!=200)
+                {
+                    onSignupFailed("Ошибка регистрации");
+                }
 
-                Log.d("signup() error:","");
+                if(response.raw().code()==200 && response.body().success==false)
+                {
+                    if(response.body().errorText!=null && response.body().errorText.length()!=0)
+                    {
+                        onSignupFailed(response.body().errorText);
+                    }
+                    else
+                    {
+                        onSignupFailed("Ошибка регистрации");
+                    }
+                }
+
+                if(response.raw().code()==200 && response.body().success==true)
+                {
+                    onSignupSuccess();
+                }
+
+                progressDialog.dismiss();
             }
         });
-
-//        new android.os.Handler().postDelayed(
-//                new Runnable() {
-//                    public void run() {
-//                        // On complete call either onSignupSuccess or onSignupFailed
-//                        // depending on success
-//                        onSignupSuccess();
-//                        // onSignupFailed();
-//                        progressDialog.dismiss();
-//                    }
-//                }, 3000);
     }
 
 
@@ -133,8 +143,8 @@ public class SignupActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Ошибка регистрации", Toast.LENGTH_LONG).show();
+    public void onSignupFailed(String msg) {
+        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
@@ -170,7 +180,7 @@ public class SignupActivity extends AppCompatActivity {
             _passwordText.setError(null);
         }
 
-        if(passwordRepeat.isEmpty() || passwordRepeat.equals(password)) {
+        if(passwordRepeat.isEmpty() || !passwordRepeat.equals(password)) {
             _passwordRepeatText.setError("Пароли не совпадают");
             valid = false;
         } else {
