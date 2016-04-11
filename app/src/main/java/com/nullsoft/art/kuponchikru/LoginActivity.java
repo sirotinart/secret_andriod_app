@@ -83,21 +83,37 @@ public class LoginActivity extends AppCompatActivity {
 
         LoginService service = retrofit.create(LoginService.class);
 
-        Call<ResponseBody> call = service.userLogin(email,password);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<ServerApi.ServerResponse> call = service.userLogin(email,password);
+        call.enqueue(new Callback<ServerApi.ServerResponse>() {
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ServerApi.ServerResponse> call, Throwable t) {
                 Log.d("login() error:",t.getMessage());
-
-                onLoginFailed();
+                onLoginFailed("Ошибка входа");
                 progressDialog.dismiss();
 
             }
 
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("login() error:","success");
+            public void onResponse(Call<ServerApi.ServerResponse> call, Response<ServerApi.ServerResponse> response) {
+                if(response.raw().code()!=200)
+                {
+                    onLoginFailed("Ошибка входа");
+                }
+
+                if(response.raw().code()==200 && response.body().success==false)
+                {
+                    if(response.body().errorText!=null)
+                    {
+                        onLoginFailed(response.body().errorText);
+                    }
+                }
+
+                if(response.raw().code()==200 && response.body().success==true)
+                {
+                    onLoginSuccess();
+                }
+                progressDialog.dismiss();
             }
         });
 
@@ -139,8 +155,8 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Ошибка входа", Toast.LENGTH_LONG).show();
+    public void onLoginFailed(String msg) {
+        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 
         _loginButton.setEnabled(true);
     }

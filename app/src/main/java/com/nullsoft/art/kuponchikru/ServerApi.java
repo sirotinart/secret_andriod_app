@@ -23,7 +23,7 @@ public class ServerApi {
     }
 
 
-    public class SignupResponse {
+    public class ServerResponse {
         public boolean success;
         public String errorText;
         public String[] errors;

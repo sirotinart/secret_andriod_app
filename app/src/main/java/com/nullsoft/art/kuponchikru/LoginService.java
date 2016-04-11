@@ -14,6 +14,6 @@ public interface LoginService
 {
     @FormUrlEncoded
     @POST("userLogin")
-    Call<ResponseBody> userLogin(@Field("login") String first, @Field("password") String last);
+    Call<ServerApi.ServerResponse> userLogin(@Field("login") String first, @Field("password") String last);
 
 }

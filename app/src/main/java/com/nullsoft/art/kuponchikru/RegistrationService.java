@@ -1,6 +1,5 @@
 package com.nullsoft.art.kuponchikru;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -13,7 +12,7 @@ public interface RegistrationService
 {
     @FormUrlEncoded
     @POST("registerUser")
-    Call<ServerApi.SignupResponse> registerUser(@Field("login") String login, @Field("firstName") String firstName,
-                                    @Field("lastName") String LastName, @Field("city") String city,
-                                    @Field("password") String last);
+    Call<ServerApi.ServerResponse> registerUser(@Field("login") String login, @Field("firstName") String firstName,
+                                                @Field("lastName") String LastName, @Field("city") String city,
+                                                @Field("password") String last);
 }

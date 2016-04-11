@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,12 +94,12 @@ public class SignupActivity extends AppCompatActivity {
         RegistrationService service = retrofit.create(RegistrationService.class);
 
 //        Call<ResponseBody> call = service.registerUser(email, name, lastName, city, password);
-        Call<ServerApi.SignupResponse> call = service.registerUser("dsf@df88d.df", "art2", "sir2", "Иваново", "345");
+        Call<ServerApi.ServerResponse> call = service.registerUser("dsf@df88d.df", "art2", "sir2", "Иваново", "345");
 
-        call.enqueue(new Callback<ServerApi.SignupResponse>() {
+        call.enqueue(new Callback<ServerApi.ServerResponse>() {
 
             @Override
-            public void onFailure(Call<ServerApi.SignupResponse> call, Throwable t) {
+            public void onFailure(Call<ServerApi.ServerResponse> call, Throwable t) {
                 Log.d("signup() error:",t.getMessage());
                 onSignupFailed("Ошибка регистрации");
                 progressDialog.dismiss();
@@ -108,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(Call<ServerApi.SignupResponse> call, Response<ServerApi.SignupResponse> response) {
+            public void onResponse(Call<ServerApi.ServerResponse> call, Response<ServerApi.ServerResponse> response) {
                 if(response.raw().code()!=200)
                 {
                     onSignupFailed("Ошибка регистрации");
