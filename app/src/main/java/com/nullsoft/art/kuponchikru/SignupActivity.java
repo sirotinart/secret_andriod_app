@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,10 +74,10 @@ public class SignupActivity extends AppCompatActivity {
     public void signup() {
         Log.d(TAG, "Signup");
 
-//        if (!validate()) {
-//            onSignupFailed();
-//            return;
-//        }
+        if (!validate()) {
+            onSignupFailed("Ошибка регистрации");
+            return;
+        }
 
         _signupButton.setEnabled(false);
 
@@ -91,10 +92,10 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        RegistrationService service = retrofit.create(RegistrationService.class);
+        ServerApi.RegistrationService service = retrofit.create(ServerApi.RegistrationService.class);
 
-//        Call<ResponseBody> call = service.registerUser(email, name, lastName, city, password);
-        Call<ServerApi.ServerResponse> call = service.registerUser("dsf@df88d.df", "art2", "sir2", "Иваново", "345");
+        Call<ServerApi.ServerResponse> call = service.registerUser(email, name, lastName, city, password);
+//        Call<ServerApi.ServerResponse> call = service.registerUser("dsf@df88d.df", "art2", "sir2", "Иваново", "345");
 
         call.enqueue(new Callback<ServerApi.ServerResponse>() {
 
@@ -153,6 +154,7 @@ public class SignupActivity extends AppCompatActivity {
         boolean valid = true;
 
         String name = _nameText.getText().toString();
+        String lastName=_lastNameText.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
         String passwordRepeat =_passwordRepeatText.getText().toString();
@@ -163,6 +165,13 @@ public class SignupActivity extends AppCompatActivity {
             valid = false;
         } else {
             _nameText.setError(null);
+        }
+
+        if (lastName.isEmpty() || lastName.length() < 3) {
+            _lastNameText.setError("Фамилия должна быть длиннее 3 символов");
+            valid = false;
+        } else {
+            _lastNameText.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
