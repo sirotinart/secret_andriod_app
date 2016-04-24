@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by art on 03.04.16.
@@ -33,6 +34,7 @@ public class ProfileActivity extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.profile_screen_name);
