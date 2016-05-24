@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -50,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
+                startActivity(intent);
             }
         });
 
@@ -74,16 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         login(email, password);
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SIGNUP) {
-            if (resultCode == RESULT_OK) {
-                this.finish();
-            }
-        }
-    }
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
@@ -91,6 +82,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
+
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 
@@ -127,17 +122,10 @@ public class LoginActivity extends AppCompatActivity {
     {
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
+        progressDialog.setMessage("Авторизация...");
         progressDialog.show();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.100:3000/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ServerApi.LoginService service = retrofit.create(ServerApi.LoginService.class);
-
-        Call<ServerApi.ServerResponse> call = service.userLogin(email,password);
+        Call<ServerApi.ServerResponse> call = ServerApi.getUserService().login(email,password);
         call.enqueue(new Callback<ServerApi.ServerResponse>() {
 
             @Override
@@ -155,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                     onLoginFailed("Ошибка входа");
                 }
 
-                if(response.raw().code()==200 && response.body().success==false)
+                if(response.raw().code()==200 && !response.body().success)
                 {
                     if(response.body().errorText!=null)
                     {
@@ -163,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
 
-                if(response.raw().code()==200 && response.body().success==true)
+                if(response.raw().code()==200 && response.body().success)
                 {
                     response.body().user.PASSWORD=password;
                     UserController.getController().insert(response.body().user);
@@ -176,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void tryAutologin()
     {
-        UserController.User user=UserController.getController().get();
+        User user=UserController.getController().get();
         if(user!=null)
         {
             _emailText.setText(user.LOGIN);

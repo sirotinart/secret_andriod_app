@@ -1,5 +1,6 @@
 package com.nullsoft.art.kuponchikru;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.BinderThread;
 import android.support.annotation.Nullable;
@@ -8,11 +9,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by art on 03.04.16.
@@ -30,6 +37,9 @@ public class ProfileActivity extends AppCompatActivity
 
     @Bind(R.id.btn_update) Button updateBtn;
 
+
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,14 +53,21 @@ public class ProfileActivity extends AppCompatActivity
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        UserController.User user=UserController.getController().get();
+        loadCityList();
+
+        User user=UserController.getController().get();
 
         emailText.setText(user.LOGIN);
         firstNameText.setText(user.FIRST_NAME);
         lastNameText.setText(user.LAST_NAME);
         cityText.setText(user.ADDRESS);
 
-        updateBtn.setOnClickListener(new UpdateBtnClickListener());
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateProfile();
+            }
+        });
     }
 
     @Override
@@ -65,22 +82,7 @@ public class ProfileActivity extends AppCompatActivity
     }
 
 
-
-
-    class UpdateBtnClickListener implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View view) {
-            UserController.User user=validate();
-            if(user!=null)
-            {
-                UserController.getController().update(user, passwordText.getText().toString());
-            }
-        }
-    }
-
-
-    public UserController.User validate() {
+    public User validate() {
 
         boolean valid = true;
 
@@ -127,6 +129,11 @@ public class ProfileActivity extends AppCompatActivity
             newPasswordRepeatText.setError(null);
         }
 
+        if(newPassword.isEmpty())
+        {
+            newPassword=password;
+        }
+
         if(city.isEmpty()) {
             cityText.setError("Введите город");
             valid = false;
@@ -143,9 +150,56 @@ public class ProfileActivity extends AppCompatActivity
 
         if(valid)
         {
-            return new UserController.User(0, email, newPassword, city, name, lastName);
+            return new User(0, email, newPassword, city, name, lastName);
         }
         return null;
     }
 
+    public void loadCityList()  {
+        ServerApi.CitiesList cityListService = RetrofitManager.getRetrofit().create(ServerApi.CitiesList.class);
+        Call<ServerApi.CityList> call = cityListService.getCities();
+
+        call.enqueue(new Callback<ServerApi.CityList>() {
+            @Override
+            public void onResponse(Call<ServerApi.CityList> call, Response<ServerApi.CityList> response) {
+                AutoCompleteTextView tv = (AutoCompleteTextView) findViewById(R.id.input_city);
+
+                String[] cities = {};
+                cities = response.body().cities.toArray(cities);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,cities);
+
+                try {
+                    tv.setAdapter(adapter);
+                } catch (NullPointerException e) {
+                    Log.d("loadCityList() error:", e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ServerApi.CityList> call, Throwable t) {
+                Log.d("loadCityList() error:", "cannot get list of cities from server (network error)");
+                Log.d("loadCityList() error:", t.getMessage());
+            }
+        });
+    }
+
+    public void updateProfile()
+    {
+        User user=validate();
+        if(user!=null)
+        {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Обновление данных...");
+            progressDialog.show();
+            UserController.getController().update(user, passwordText.getText().toString(), new ProfileMsgHandler(this));
+        }
+    }
+
+    public void updateProfileComplete(String msg)
+    {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        progressDialog.dismiss();
+    }
 }

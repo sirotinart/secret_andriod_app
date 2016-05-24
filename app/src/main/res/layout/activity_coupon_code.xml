@@ -8,7 +8,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_darker"
+        android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"/>
 
     <ScrollView
@@ -27,8 +27,7 @@
                 android:maxHeight="400dp"
                 android:src="@drawable/coupon_test"
                 android:layout_margin="3dp"
-                android:adjustViewBounds="true"
-                 />
+                android:adjustViewBounds="true" />
 
             <LinearLayout
                 android:id="@+id/layout_btn1"
@@ -45,14 +44,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="Авреса магазинов"
-                    android:textSize="12sp"/>
-
-                <Button
-                    android:id="@+id/activity_favorites_btn"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Добавить в закладки"
                     android:textSize="12sp"/>
 
             </LinearLayout>
@@ -221,16 +212,6 @@
 
             </android.support.v7.widget.CardView>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Купить"
-                android:id="@+id/buy_btn"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="5dp"
-                android:layout_below="@+id/layout_card_view"/>
         </RelativeLayout>
 
     </ScrollView>

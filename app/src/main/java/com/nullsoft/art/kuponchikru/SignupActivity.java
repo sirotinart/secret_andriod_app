@@ -6,6 +6,8 @@ package com.nullsoft.art.kuponchikru;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +30,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
-    private Retrofit retrofit;
 
     @Bind(R.id.input_name) EditText _nameText;
     @Bind(R.id.input_last_name) EditText _lastNameText;
@@ -39,12 +40,11 @@ public class SignupActivity extends AppCompatActivity {
     @Bind(R.id.btn_signup) Button _signupButton;
     @Bind(R.id.link_login) TextView _loginLink;
 
+    private ProgressDialog progressDialog;
+
     public SignupActivity()
     {
-         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.100:3000/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+
     }
 
 
@@ -81,7 +81,7 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
+        progressDialog = new ProgressDialog(SignupActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
@@ -92,48 +92,10 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        ServerApi.RegistrationService service = retrofit.create(ServerApi.RegistrationService.class);
+        SignupMsgHandler handler=new SignupMsgHandler(this);
 
-        Call<ServerApi.ServerResponse> call = service.registerUser(email, name, lastName, city, password);
-//        Call<ServerApi.ServerResponse> call = service.registerUser("dsf@df88d.df", "art2", "sir2", "Иваново", "345");
+        UserController.getController().create(email, name, lastName, city, password, handler);
 
-        call.enqueue(new Callback<ServerApi.ServerResponse>() {
-
-            @Override
-            public void onFailure(Call<ServerApi.ServerResponse> call, Throwable t) {
-                Log.d("signup() error:",t.getMessage());
-                onSignupFailed("Ошибка регистрации");
-                progressDialog.dismiss();
-
-            }
-
-            @Override
-            public void onResponse(Call<ServerApi.ServerResponse> call, Response<ServerApi.ServerResponse> response) {
-                if(response.raw().code()!=200)
-                {
-                    onSignupFailed("Ошибка регистрации");
-                }
-
-                if(response.raw().code()==200 && response.body().success==false)
-                {
-                    if(response.body().errorText!=null && response.body().errorText.length()!=0)
-                    {
-                        onSignupFailed(response.body().errorText);
-                    }
-                    else
-                    {
-                        onSignupFailed("Ошибка регистрации");
-                    }
-                }
-
-                if(response.raw().code()==200 && response.body().success==true)
-                {
-                    onSignupSuccess();
-                }
-
-                progressDialog.dismiss();
-            }
-        });
     }
 
 
@@ -145,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupFailed(String msg) {
         Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
-
+        progressDialog.dismiss();
         _signupButton.setEnabled(true);
     }
 
@@ -206,7 +168,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void loadCityList()  {
-        ServerApi.CitiesList cityListService = retrofit.create(ServerApi.CitiesList.class);
+        ServerApi.CitiesList cityListService = RetrofitManager.getRetrofit().create(ServerApi.CitiesList.class);
         Call<ServerApi.CityList> call = cityListService.getCities();
 
         call.enqueue(new Callback<ServerApi.CityList>() {

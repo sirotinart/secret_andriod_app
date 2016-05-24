@@ -4,8 +4,12 @@ package com.nullsoft.art.kuponchikru;
  * Created by art on 01.04.16.
  */
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -16,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -30,12 +35,19 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
 
     Drawer mainDrawer;
 
-
+    private static final int REQUEST_LOGIN = 0;
+    private int mProgressStatus = 0;
+    private Handler mHandler = new Handler();
+    private FragmentMain fragmentMain;
+    private FragmentHistory fragmentHistory;
+    private FragmentFavorites fragmentFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.main_screen_name);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -72,47 +85,41 @@ public class MainActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .withActionBarDrawerToggle(true)
                 .withAccountHeader(headerResult)
-                .withSelectedItem(6)
+                .withSelectedItem(7)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.drawer_item_offers).withIcon(FontAwesome.Icon.faw_shopping_bag).withSelectable(false).withIdentifier(1),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_history).withIcon(FontAwesome.Icon.faw_archive).withSelectable(false).withIdentifier(2),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_profile).withIcon(FontAwesome.Icon.faw_user).withSelectable(false).withIdentifier(3),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_question_circle).withSelectable(false).withIdentifier(4),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_favorites).withIcon(FontAwesome.Icon.faw_star).withSelectable(false).withIdentifier(3),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_profile).withIcon(FontAwesome.Icon.faw_user).withSelectable(false).withIdentifier(4),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_question_circle).withSelectable(false).withIdentifier(5),
                         new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_exit).withIcon(FontAwesome.Icon.faw_sign_out).withSelectable(false).withIdentifier(5)
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_exit).withIcon(FontAwesome.Icon.faw_sign_out).withSelectable(false).withIdentifier(6)
                 )
                 .withOnDrawerItemClickListener(new DrawerClickListener())
-                .withCloseOnClick(true)
                 .build();
-        FragmentMain test=new FragmentMain();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, test).commit();
+        ProgressBar mProgress = (ProgressBar) findViewById(R.id.progressBar);
+        mProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,getFragmentMain()).commit();
 
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -121,29 +128,31 @@ public class MainActivity extends AppCompatActivity {
     {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-            Log.d("Click: ", String.valueOf(position) );
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+            mainDrawer.closeDrawer();
+
 
             switch (position)
             {
                 case 1:
                 {
-
-                    toolbar.setTitle(R.string.main_screen_name);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new FragmentMain())
-                            //.addToBackStack(null)
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,getFragmentMain())
                             .commit();
                     break;
                 }
                 case 2:
                 {
-                    toolbar.setTitle(R.string.history_screen_name);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new FragmentHistory())
-                            //.addToBackStack(null)
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,getFragmentHistory())
                             .commit();
                     break;
                 }
                 case 3:
+                {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,getFragmentFavorites())
+                            .commit();
+                    break;
+                }
+                case 4:
                 {
                     MainActivity context = (MainActivity) view.getContext();
                     Intent intent = new Intent(context, ProfileActivity.class);
@@ -151,17 +160,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("Lol", "lol3");
                     break;
                 }
-                case 4:
+                case 5:
                 {
-                    //показываем всплывающее окошко с инфой
                     MainActivity context = (MainActivity) view.getContext();
                     AboutDialog dlg1=new AboutDialog();
                     dlg1.show(context.getFragmentManager(),"dlg1");
                     break;
                 }
-                case 5:
+                case 7:
                 {
-                    //очищаем кэш бд, закрываем приложение
+                    UserController.getController().logout();
+                    finish();
                     break;
                 }
             }
@@ -182,13 +191,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public  void showAddToFavoriteMenu(View v)
+    private FragmentMain getFragmentMain()
     {
-        PopupMenu popup = new PopupMenu(this, v);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.add_to_favorite, popup.getMenu());
-        popup.show();
+        if (fragmentMain==null)
+        {
+            fragmentMain=new FragmentMain();
+        }
+
+        return fragmentMain;
     }
 
+    private FragmentHistory getFragmentHistory()
+    {
+        if (fragmentHistory==null)
+        {
+            fragmentHistory=new FragmentHistory();
+        }
 
+        return fragmentHistory;
+    }
+
+    private FragmentFavorites getFragmentFavorites()
+    {
+        if (fragmentFavorites==null)
+        {
+            fragmentFavorites=new FragmentFavorites();
+        }
+
+        return fragmentFavorites;
+    }
 }

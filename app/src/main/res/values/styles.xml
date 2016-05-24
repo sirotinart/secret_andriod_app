@@ -1,8 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/primary</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/control_activated</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="colorButtonNormal">@color/primary_darker</item>
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
@@ -15,6 +23,7 @@
         <item name="colorControlHighlight">@color/control_activated</item>
         <item name="android:textColorHint">@color/white</item>
         <item name="colorButtonNormal">@color/primary_darker</item>
+        <item name="android:colorBackground">@color/accent</item>
     </style>
 
 
@@ -33,7 +42,7 @@
     <style name="AppTheme.ProfileActivity" parent="AppTheme.Dark">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/gray</item>
         <item name="android:windowBackground">@color/primary</item>
         <item name="colorControlNormal">@color/iron</item>
         <item name="colorControlActivated">@color/gray</item>
@@ -41,5 +50,6 @@
         <item name="colorButtonNormal">@color/primary_darker</item>
         <item name="android:textColorPrimary">@color/gray</item>
     </style>
+
 
 </resources>

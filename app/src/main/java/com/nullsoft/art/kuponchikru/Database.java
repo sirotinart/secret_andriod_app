@@ -9,9 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class Database extends SQLiteOpenHelper
 {
-//    private static final String USER_INFO_TABLE="user_info";
-
-    private static final int DATABASE_VERSION=1;
+    private static final int DATABASE_VERSION=18;
 
     private static Database db=new Database(Kuponchikru.getAppContext(),"kuponckik_db", null, DATABASE_VERSION);
 
@@ -27,16 +25,22 @@ public class Database extends SQLiteOpenHelper
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table user_info_table (_id integer primary key, login text, password text, address text, first_name text, last_name text);");
-        sqLiteDatabase.execSQL("create table user_coupons (_id integer primary key, unique_code text, name text, description text, " +
-                "sell_date text, exp_date text, seller_name text, shop_address_list text, seller_id integer, price integer, full_price integer, discount integer);");
-        sqLiteDatabase.execSQL("create table coupons_cache (_id integer primary key, name text, description text, " +
-                "crt_date text, exp_date text, seller_name text, shop_address_list text, seller_id integer, price integer, full_price integer, discount integer);");
+        sqLiteDatabase.execSQL("create table user_info_table (USER_ID integer primary key, LOGIN text, PASSWORD text, ADDRESS text, FIRST_NAME text, LAST_NAME text);");
+        sqLiteDatabase.execSQL("create table user_coupons (COUPON_ID integer, DESCRIPTION text, DATE text, " +
+                "CREATION_DATE text, EXPIRATION_DATE text, NAME text, SHOP_ADDRESS_LIST text, SUPPLIER_ID integer, PRICE integer, " +
+                "FULL_PRICE integer, DISCOUNT integer, COUNT integer, SHORT_DESCRIPTION text, CATEGORY text, CITY text, CODE text primary key);");
+        sqLiteDatabase.execSQL("create table coupons_cache (COUPON_ID integer primary key, DESCRIPTION text, " +
+                "CREATION_DATE text, EXPIRATION_DATE text, NAME text, SHOP_ADDRESS_LIST text, SUPPLIER_ID integer, PRICE integer, " +
+                "FULL_PRICE integer, DISCOUNT integer, COUNT integer, SHORT_DESCRIPTION text, CATEGORY text, CITY text);");
+        sqLiteDatabase.execSQL("create table user_favorites (COUPON_ID integer primary key)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("drop table if exist user_info_table");
+        sqLiteDatabase.execSQL("drop table if exists user_info_table");
+        sqLiteDatabase.execSQL("drop table if exists user_coupons");
+        sqLiteDatabase.execSQL("drop table if exists coupons_cache");
+        sqLiteDatabase.execSQL("drop table if exists user_favorites");
         onCreate(sqLiteDatabase);
     }
 

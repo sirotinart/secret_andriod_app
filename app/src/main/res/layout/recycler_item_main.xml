@@ -3,7 +3,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp">
+    android:paddingBottom="3dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp">
+
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -13,15 +16,17 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
         card_view:cardCornerRadius="2dp"
+        card_view:cardPreventCornerOverlap="false"
         card_view:contentPadding="0dp"
         card_view:cardElevation="2dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="6dp"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:theme="@style/AppTheme.Dark">
 
         <RelativeLayout
+            android:id="@+id/description_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <ImageView
@@ -29,75 +34,78 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_gravity="center"
-                android:src="@drawable/kdpv"
                 android:scaleType="centerCrop"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/item_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:background="@color/iron_light"
+                android:textColor="@color/coupon_card_discount_bg"
+                android:textSize="25sp"
+                android:text="-95%"
+                android:layout_below="@+id/card_img"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="false"
+                android:gravity="center"
+                android:layout_alignBottom="@+id/item_price">
+            </TextView>
+
+            <TextView
+                android:id="@+id/item_description"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/card_img"
-                android:orientation="horizontal">
+                android:textSize="15sp"
+                android:padding="5dp"
+                android:textColor="@color/black"
+                android:text="2 года обучения современному английскому языку"
+                android:layout_toLeftOf="@+id/item_discount"
+                android:layout_toStartOf="@+id/item_discount"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+            </TextView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.4"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/item_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:padding="3dp"
-                        android:textColor="@color/black"
-                        android:text="dkvb">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/item_discount"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:padding="3dp"
-                        android:textColor="@color/black"
-                        android:text="dkvb">
-                    </TextView>
-                </LinearLayout>
+            <TextView
+                android:id="@+id/item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="17sp"
+                android:layout_margin="1dp"
+                android:padding="3dp"
+                android:textColor="@color/coupon_card_price_bg"
+                android:background="@color/iron_light"
+                android:text="360.-"
+                android:layout_below="@+id/item_description"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="false"
+                android:layout_toLeftOf="@+id/item_full_price">
+            </TextView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.6"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/item_price"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:padding="3dp"
-                        android:textColor="@color/black"
-                        android:text="ferhsrghvdkfjvndfbjdfbnkjbnkjbnfnxk,bxfnbjnx jxfnbgn xxkfjgbnxkfghhbn xkfbnxkvf dkvb"
-                        >
-                    </TextView>
-                    <TextView
-                        android:id="@+id/item_full_price"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:padding="3dp"
-                        android:textColor="@color/black"
-                        android:text="ferhsrghvdkfjvndfbjdfbnkjbnkjbnfnxk,bxfnbjnx jxfnbgn xxkfjgbnxkfghhbn xkfbnxkvf dkvb"
-                        >
-                    </TextView>
-                </LinearLayout>
-
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/item_full_price"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="3dp"
+                android:textColor="@color/coupon_card_full_price_bg"
+                android:background="@color/iron_light"
+                android:text="7200.-"
+                android:layout_below="@+id/item_description"
+                android:layout_toLeftOf="@+id/item_discount"
+                android:layout_alignBottom="@+id/item_price">
+            </TextView>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/coupon_item_menu"
-                android:onClick="showAddToFavoriteMenu"
                 android:layout_alignParentLeft="false"
                 android:layout_marginLeft="6dp"
                 android:layout_alignParentTop="true"
@@ -105,13 +113,12 @@
                 android:contentDescription="favorite_menu"
                 android:layout_marginRight="6dp"
                 android:layout_alignParentRight="true"
-                android:background="@color/transparent"/>
-
+                android:background="@color/transparent"
+                android:id="@+id/add_to_favorites_btn"
+                android:theme="@style/AppTheme"/>
 
         </RelativeLayout>
 
-
     </android.support.v7.widget.CardView>
-
 
 </RelativeLayout>

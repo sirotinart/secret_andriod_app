@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,26 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class UserController
 {
-    public static class User
-    {
-        public int USER_ID;
-        public String LOGIN;
-        public String PASSWORD;
-        public String ADDRESS;
-        public String FIRST_NAME;
-        public String LAST_NAME;
 
-        public User(int id, String login, String password, String address, String firstName, String lastName)
-        {
-            this.LOGIN=login;
-            this.PASSWORD=password;
-            this.ADDRESS=address;
-            this.FIRST_NAME=firstName;
-            this.LAST_NAME=lastName;
-            this.USER_ID=id;
-        }
-
-    }
 
     private static UserController controller=new UserController();
 
@@ -54,15 +36,11 @@ public class UserController
 
         if(c!=null && c.moveToFirst())
         {
-            int id=c.getInt(c.getColumnIndex("_id"));
-            String login=c.getString(c.getColumnIndex("login"));
-            String password=c.getString(c.getColumnIndex("password"));
-            String address=c.getString(c.getColumnIndex("address"));
-            String firstName=c.getString(c.getColumnIndex("first_name"));
-            String lastName=c.getString(c.getColumnIndex("last_name"));
+            User user=new User(c);
+
             c.close();
 
-            return new User(id, login, password, address, firstName, lastName);
+            return user;
         }
 
         return null;
@@ -70,16 +48,9 @@ public class UserController
 
     public void insert(User user)
     {
-        Database.getDb().delete("user_info_table", null,null);
+        Database.getDb().delete("user_info_table", null, null);
 
-        ContentValues values=new ContentValues();
-        values.put("_id", user.USER_ID);
-        values.put("login", user.LOGIN);
-        values.put("password", user.PASSWORD);
-        values.put("address", user.ADDRESS);
-        values.put("first_name", user.FIRST_NAME);
-        values.put("last_name", user.LAST_NAME);
-        long insertId=Database.getDb().insert("user_info_table", null, values);
+        long insertId=Database.getDb().insert("user_info_table", null, user.toContentValues());
 
         if(insertId==-1)
         {
@@ -87,63 +58,135 @@ public class UserController
         }
     }
 
-    public void update(User newUser, String password)
+    public void update(final User newUser, String password,final ProfileMsgHandler handler)
     {
+        final Message message=Message.obtain(handler,0);
+
         User currentUser=get();
 
         newUser.USER_ID=currentUser.USER_ID;
 
         if(!password.equals(currentUser.PASSWORD))
         {
-            Toast.makeText(Kuponchikru.getAppContext(),"Неверный текущий пароль", Toast.LENGTH_LONG).show();
+            message.obj="Неверный текущий пароль";
+            handler.sendMessage(message);
         }
         else
         {
-            final ProgressDialog progressDialog = new ProgressDialog(Kuponchikru.getAppContext());
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Обновление данных...");
-            progressDialog.show();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.0.100:3000/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            ServerApi.UserInfoUpdateService service = retrofit.create(ServerApi.UserInfoUpdateService.class);
-
-            Call<ServerApi.ServerResponse> call = service.updateUser(newUser.USER_ID, newUser.LOGIN, newUser.FIRST_NAME, newUser.LAST_NAME, newUser.ADDRESS, currentUser.PASSWORD, newUser.PASSWORD);
+            Call<ServerApi.ServerResponse> call = ServerApi.getUserService().update(newUser.USER_ID, newUser.LOGIN, newUser.FIRST_NAME, newUser.LAST_NAME, newUser.ADDRESS, currentUser.PASSWORD, newUser.PASSWORD);
             call.enqueue(new Callback<ServerApi.ServerResponse>() {
 
                 @Override
                 public void onFailure(Call<ServerApi.ServerResponse> call, Throwable t) {
                     Log.d("update() error:",t.getMessage());
-                    progressDialog.dismiss();
-
+                    message.obj=t.getMessage();
+                    handler.sendMessage(message);
                 }
 
                 @Override
                 public void onResponse(Call<ServerApi.ServerResponse> call, Response<ServerApi.ServerResponse> response) {
                     if(response.raw().code()!=200)
                     {
-
+                        Log.d("update() error:", "unknown error");
+                        message.obj="Ошибка";
                     }
 
-                    if(response.raw().code()==200 && response.body().success==false)
+                    if(response.raw().code()==200 && !response.body().success)
                     {
                         if(response.body().errorText!=null)
                         {
-
+                            Log.d("update() error:", response.body().errorText);
+                            message.obj=response.body().errorText;
+                        }
+                        else
+                        {
+                            message.obj="Ошибка";
                         }
                     }
 
-                    if(response.raw().code()==200 && response.body().success==true)
+                    if(response.raw().code()==200 && response.body().success)
                     {
-
+                        insert(newUser);
+                        message.obj="Информация обновлена";
                     }
-                    progressDialog.dismiss();
+
+                    handler.sendMessage(message);
                 }
             });
         }
     }
+
+    public void create(String login, String firstName, String lastName, String city, String password, final SignupMsgHandler handler)
+    {
+        Call<ServerApi.ServerResponse> call = ServerApi.getUserService().register(login, firstName, lastName, city, password);
+
+        final Message message=Message.obtain(handler,0);
+
+        call.enqueue(new Callback<ServerApi.ServerResponse>() {
+
+
+            @Override
+            public void onFailure(Call<ServerApi.ServerResponse> call, Throwable t) {
+                Log.d("signup() error:",t.getMessage());
+
+                message.obj="Ошибка регистрации";
+                handler.sendMessage(message);
+            }
+
+            @Override
+            public void onResponse(Call<ServerApi.ServerResponse> call, Response<ServerApi.ServerResponse> response) {
+                if(response.raw().code()!=200)
+                {
+                    message.obj="Ошибка регистрации";
+                    handler.sendMessage(message);
+                }
+
+                if(response.raw().code()==200 && !response.body().success)
+                {
+                    if(response.body().errorText!=null && response.body().errorText.length()!=0)
+                    {
+                        message.obj=response.body().errorText;
+                        handler.sendMessage(message);
+
+                    }
+                    else
+                    {
+                        message.obj="Ошибка регистрации";
+                        handler.sendMessage(message);
+                    }
+                }
+
+                if(response.raw().code()==200 && response.body().success)
+                {
+                    message.obj=null;
+                    handler.sendMessage(message);
+                }
+            }
+        });
+    }
+
+    public void logout()
+    {
+        Call<ServerApi.ServerResponse> call=ServerApi.getUserService().logout();
+        call.enqueue(new Callback<ServerApi.ServerResponse>() {
+
+            @Override
+            public void onResponse(Call<ServerApi.ServerResponse> call, Response<ServerApi.ServerResponse> response) {
+                if(response.body()!=null)
+                {
+                    if(response.body().success)
+                    {
+                        Database.getDb().delete("user_info_table", null, null);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerApi.ServerResponse> call, Throwable t) {
+                Log.d("logout() error:", t.getMessage());
+            }
+        });
+    }
+
 
 }

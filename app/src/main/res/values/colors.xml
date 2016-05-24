@@ -14,10 +14,16 @@
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
     <color name="white">#FFFFFF</color>
+
     <color name="background1">#479dff</color>
     <color name="background_transparent">#479dff</color>
     <color name="background_dark">#bbc3d9</color>
     <color name="transparent">#00bbc3d9</color>
     <color name="gray">#595959</color>
     <color name="control_activated">#3794ff</color>
+
+    <color name="coupon_card_discount_bg">#004799</color>
+    <color name="coupon_card_price_bg">#009900</color>
+    <color name="coupon_card_full_price_bg">#990000</color>
+    <color name="iron_light">#f2f2f2</color>
 </resources>

@@ -21,7 +21,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kuponchik.ru v0.1"
+        android:text="Kuponchik.ru v1.0b"
         android:id="@+id/textView"
         android:layout_below="@+id/textView3"
         android:layout_alignLeft="@+id/textView3"

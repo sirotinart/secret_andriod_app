@@ -7,7 +7,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/primary_darker"
         android:minHeight="?attr/actionBarSize"/>
 
     <ScrollView
@@ -48,7 +48,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
-                            android:hint="Email" />
+                            android:hint="Email"
+                            android:textCursorDrawable="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -66,7 +67,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textCapWords"
-                            android:hint="Имя" />
+                            android:hint="Имя"
+                            android:textCursorDrawable="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -81,7 +83,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textCapWords"
-                            android:hint="Фамилия" />
+                            android:hint="Фамилия"
+                            android:textCursorDrawable="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -92,11 +95,12 @@
                         android:layout_marginBottom="8dp"
                         android:textColorHint="@color/gray">
 
-                        <EditText android:id="@+id/input_city"
+                        <AutoCompleteTextView android:id="@+id/input_city"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textCapWords"
-                            android:hint="Город" />
+                            android:hint="Город"
+                            android:textCursorDrawable="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -114,7 +118,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textPassword"
-                            android:hint="Новый пароль"/>
+                            android:hint="Новый пароль"
+                            android:textCursorDrawable="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -129,7 +134,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textPassword"
-                            android:hint="Повторите новый пароль"/>
+                            android:hint="Повторите новый пароль"
+                            android:textCursorDrawable="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -156,7 +162,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:hint="Введите текущий пароль"/>
+                        android:hint="Введите текущий пароль"
+                        android:textCursorDrawable="@null"/>
 
                 </android.support.design.widget.TextInputLayout>
 
