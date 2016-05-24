@@ -1,18 +1,14 @@
 package com.nullsoft.art.kuponchikru;
 
-import android.app.ProgressDialog;
-import android.content.ContentValues;
+
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 /**
  * Created by art on 24.04.16.
@@ -186,6 +182,13 @@ public class UserController
                 Log.d("logout() error:", t.getMessage());
             }
         });
+    }
+
+    public String getUserName()
+    {
+        User user=get();
+
+        return user.FIRST_NAME+' '+user.LAST_NAME;
     }
 
 

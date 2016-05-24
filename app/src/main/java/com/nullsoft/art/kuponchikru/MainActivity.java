@@ -3,21 +3,15 @@ package com.nullsoft.art.kuponchikru;
 /**
  * Created by art on 01.04.16.
  */
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -30,21 +24,14 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
 
     Drawer mainDrawer;
 
-    private static final int REQUEST_LOGIN = 0;
-    private int mProgressStatus = 0;
-    private Handler mHandler = new Handler();
     private FragmentMain fragmentMain;
     private FragmentHistory fragmentHistory;
     private FragmentFavorites fragmentFavorites;
@@ -64,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
-                .withProfileImagesVisible(false)
-//                .withCompactStyle(true)
+                .withProfileImagesVisible(true)
+//                .withCompactStyle(false)
 //                .withTextColorRes(R.color.black)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("Сиротин Артём").withEmail("sirotinart@gmail.com")
+                        new ProfileDrawerItem().withName(UserController.getController().getUserName())
                 )
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
