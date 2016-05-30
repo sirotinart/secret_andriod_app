@@ -44,6 +44,14 @@ public class UserController
 
     public void insert(User user)
     {
+        User user1=get();
+        if(user1!=null && !user.LOGIN.equals(user1.LOGIN))
+        {
+            CouponController.getInstance().clearUserCache();
+            CouponController.getInstance().clearFavoritesCache();
+
+        }
+
         Database.getDb().delete("user_info_table", null, null);
 
         long insertId=Database.getDb().insert("user_info_table", null, user.toContentValues());

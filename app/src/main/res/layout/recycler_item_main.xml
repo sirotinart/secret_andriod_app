@@ -36,22 +36,34 @@
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"/>
 
-            <TextView
+
+
+            <LinearLayout
                 android:id="@+id/item_discount"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:background="@color/iron_light"
-                android:textColor="@color/coupon_card_discount_bg"
-                android:textSize="25sp"
-                android:text="-95%"
+                android:orientation="vertical"
                 android:layout_below="@+id/card_img"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="false"
-                android:gravity="center"
-                android:layout_alignBottom="@+id/item_price">
-            </TextView>
+                android:layout_alignBottom="@+id/item_price"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Скидка"
+                    android:textColor="@color/coupon_card_discount_bg"/>
+
+                <TextView
+                    android:id="@+id/item2_discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/coupon_card_discount_bg"
+                    android:textSize="25sp"
+                    android:text="-95%">
+                </TextView>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/item_description"
@@ -61,11 +73,40 @@
                 android:textSize="15sp"
                 android:padding="5dp"
                 android:textColor="@color/black"
-                android:text="2 года обучения современному английскому языку"
+                android:background="@color/iron_light"
+                android:text="2 года обучения современному английскому языку hdrthrrd rthdrthrthfth "
                 android:layout_toLeftOf="@+id/item_discount"
                 android:layout_toStartOf="@+id/item_discount"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true">
+            </TextView>
+
+            <TextView
+                android:id="@+id/text_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="@color/coupon_card_price_bg"
+                android:text="Цена по акции"
+                android:layout_below="@+id/item_description"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="false"
+                android:layout_toLeftOf="@+id/item_full_price">
+            </TextView>
+
+            <TextView
+                android:id="@+id/text_full_price"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="@color/coupon_card_full_price_bg"
+                android:text="Обычная цена"
+                android:layout_below="@+id/item_description"
+                android:layout_toLeftOf="@+id/item_discount"
+                android:layout_alignBottom="@+id/text_price">
             </TextView>
 
             <TextView
@@ -74,12 +115,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textSize="17sp"
-                android:layout_margin="1dp"
-                android:padding="3dp"
                 android:textColor="@color/coupon_card_price_bg"
-                android:background="@color/iron_light"
                 android:text="360.-"
-                android:layout_below="@+id/item_description"
+                android:layout_below="@+id/text_price"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="false"
@@ -91,13 +129,10 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="1dp"
                 android:padding="3dp"
                 android:textColor="@color/coupon_card_full_price_bg"
-                android:background="@color/iron_light"
                 android:text="7200.-"
-                android:layout_below="@+id/item_description"
+                android:layout_below="@+id/text_price"
                 android:layout_toLeftOf="@+id/item_discount"
                 android:layout_alignBottom="@+id/item_price">
             </TextView>

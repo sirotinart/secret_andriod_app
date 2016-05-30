@@ -49,7 +49,7 @@ public class CouponListItemAdapter extends RecyclerView.Adapter<CouponListItemAd
         public ViewHolder(View v) {
             super(v);
             item_description = (TextView) v.findViewById(R.id.item_description);
-            item_discount = (TextView) v.findViewById(R.id.item_discount);
+            item_discount = (TextView) v.findViewById(R.id.item2_discount);
             item_price = (TextView) v.findViewById(R.id.item_price);
             item_full_price = (TextView) v.findViewById(R.id.item_full_price);
             card_img = (ImageView) v.findViewById(R.id.card_img);

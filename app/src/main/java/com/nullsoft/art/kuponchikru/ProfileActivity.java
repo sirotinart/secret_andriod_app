@@ -166,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity
 
                 String[] cities = {};
                 cities = response.body().cities.toArray(cities);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,cities);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.city_list_item_profile, cities);
 
                 try {
                     tv.setAdapter(adapter);

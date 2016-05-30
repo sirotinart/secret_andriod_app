@@ -83,7 +83,12 @@ public class CouponController
 
     public void clearCache()
     {
-        Database.getDb().delete(cacheTable,null, null);
+        Database.getDb().delete(cacheTable, null, null);
+    }
+
+    public void clearFavoritesCache()
+    {
+        Database.getDb().delete(favoritesTable, null, null);
     }
 
     private int getCacheSize()

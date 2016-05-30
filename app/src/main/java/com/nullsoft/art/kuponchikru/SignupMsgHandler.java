@@ -23,7 +23,7 @@ public class SignupMsgHandler extends Handler
         SignupActivity a=(SignupActivity) activity.get();
         if(a!=null)
         {
-            if(msg.toString()!=null)
+            if(msg.obj!=null)
             {
                 a.onSignupFailed(msg.obj.toString());
             }

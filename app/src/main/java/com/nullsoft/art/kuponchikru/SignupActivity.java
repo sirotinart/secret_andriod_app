@@ -102,12 +102,12 @@ public class SignupActivity extends AppCompatActivity {
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+        progressDialog.dismiss();
         finish();
     }
 
     public void onSignupFailed(String msg) {
         Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
-        progressDialog.dismiss();
         _signupButton.setEnabled(true);
     }
 
@@ -178,7 +178,7 @@ public class SignupActivity extends AppCompatActivity {
 
                 String[] cities = {};
                 cities = response.body().cities.toArray(cities);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,cities);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.city_list_item_profile, cities);
 
                 try {
                     tv.setAdapter(adapter);
