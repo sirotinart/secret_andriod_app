@@ -18,7 +18,7 @@
     <string name="coupon_activity_discount">Скидка %1$d%%</string>
     <string name="coupon_activity_dates">%1$s - %2$s</string>
 
-    <string name="coupon_img_url">http://192.168.0.100:3000/private/%1$d/img/%2$d.jpg</string>
-    <string name="seller_img_url">http://192.168.0.100:3000/private/%1$d/img/avatar.jpg</string>
+    <string name="coupon_img_url">http://192.168.0.1:3000/private/%1$d/img/%2$d.jpg</string>
+    <string name="seller_img_url">http://192.168.0.1:3000/private/%1$d/img/avatar.jpg</string>
     <string name="title_activity_maps">Map</string>
 </resources>
